@@ -8,6 +8,9 @@ class CatBreedMapper {
     return CatBreed(
       id: dto.id,
       name: dto.name,
+      origin: dto.origin ?? '',
+      intelligence: dto.intelligence ?? 0,
+      referenceImageId: dto.referenceImageId,
     );
   }
 }
