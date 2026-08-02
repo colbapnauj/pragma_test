@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/di/service_locator.dart';
+import '../l10n/app_localizations.dart';
 import '../viewmodels/splash_view_model.dart';
 
 class SplashView extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SplashViewContent extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Cat Breeds',
+                  AppLocalizations.of(context)!.splashTitle,
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 32),

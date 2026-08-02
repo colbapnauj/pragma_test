@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/constants/app_config.dart';
 import '../core/constants/app_routes.dart';
 import '../core/utils/debounce.dart' as debounce_util;
+import '../l10n/app_localizations.dart';
 import '../data/repositories/cat_breed_repository.dart';
 import '../viewmodels/cat_breeds_list_view_model.dart';
 import 'widgets/cat_breed_card.dart';
@@ -66,9 +67,10 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<CatBreedsListViewModel>();
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cat Breeds'),
+        title: Text(l10n.homeTitle),
         centerTitle: true,
       ),
       body: Column(
@@ -80,7 +82,7 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
               children: [
                 Semantics(
                   textField: true,
-                  label: 'Search cat breeds',
+                  label: l10n.searchLabel,
                   enabled: true,
                   onTap: () => _searchController.selection = TextSelection(
                     baseOffset: 0,
@@ -88,7 +90,7 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
                   ),
                   child: SearchBar(
                     controller: _searchController,
-                    hintText: 'Search breeds...',
+                    hintText: l10n.searchHint,
                     onChanged: (value) {
                       viewModel.updateSearchQuery(value);
                       _searchDebounce(() {
@@ -99,7 +101,7 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
                         ? [
                             Semantics(
                               button: true,
-                              label: 'Clear search',
+                              label: l10n.clearSearch,
                               onTap: () {
                                 _searchController.clear();
                                 _searchDebounce.cancel();

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/entities/cat_breed.dart';
+import '../../l10n/app_localizations.dart';
 
 class CatBreedCard extends StatelessWidget {
   const CatBreedCard({super.key, required this.breed, required this.onMorePressed});
@@ -11,8 +12,9 @@ class CatBreedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Semantics(
-      label: 'Cat breed: ${breed.name}',
+      label: l10n.breedCard(breed.name),
       child: Card(
         margin: const EdgeInsets.only(bottom: 16.0),
         child: Column(
@@ -32,10 +34,10 @@ class CatBreedCard extends StatelessWidget {
                   Semantics(
                     button: true,
                     onTap: onMorePressed,
-                    label: 'View details for ${breed.name}',
+                    label: l10n.viewDetails,
                     child: TextButton(
                       onPressed: onMorePressed,
-                      child: const Text('More...'),
+                      child: Text(l10n.moreButton),
                     ),
                   ),
                 ],

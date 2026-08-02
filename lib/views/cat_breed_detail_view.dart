@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/constants/app_config.dart';
 import '../data/entities/cat_breed.dart';
 import '../data/repositories/cat_breed_repository.dart';
+import '../l10n/app_localizations.dart';
 import '../viewmodels/cat_breed_detail_view_model.dart';
 
 class CatBreedDetailView extends StatelessWidget {
@@ -40,13 +41,14 @@ class _CatBreedDetailViewContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<CatBreedDetailViewModel>();
     final breed = viewModel.breed;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Semantics(
           header: true,
-          label: '${breed?.name ?? "Breed Detail"} details',
-          child: Text(breed?.name ?? 'Breed Detail'),
+          label: '${breed?.name ?? l10n.breedDetailTitle} details',
+          child: Text(breed?.name ?? l10n.breedDetailTitle),
         ),
         centerTitle: true,
       ),
@@ -125,31 +127,32 @@ class _CatBreedDetailViewContent extends StatelessWidget {
   }
 
   Widget _buildLoadedContent(BuildContext context, CatBreed breed) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (breed.origin.isNotEmpty) ...[
-          _buildDetailRow(context, 'Origin', breed.origin),
+          _buildDetailRow(context, l10n.origin, breed.origin),
           const SizedBox(height: 16),
         ],
         if (breed.intelligence > 0) ...[
-          _buildDetailRow(context, 'Intelligence', '${breed.intelligence}'),
+          _buildDetailRow(context, l10n.intelligence, '${breed.intelligence}'),
           const SizedBox(height: 16),
         ],
         if (breed.adaptability != null) ...[
-          _buildDetailRow(context, 'Adaptability', '${breed.adaptability}'),
+          _buildDetailRow(context, l10n.adaptability, '${breed.adaptability}'),
           const SizedBox(height: 16),
         ],
         if (breed.lifeSpan != null) ...[
-          _buildDetailRow(context, 'Life Span', breed.lifeSpan!),
+          _buildDetailRow(context, l10n.lifeSpan, breed.lifeSpan!),
           const SizedBox(height: 16),
         ],
         if (breed.temperament != null) ...[
-          _buildDetailRow(context, 'Temperament', breed.temperament!),
+          _buildDetailRow(context, l10n.temperament, breed.temperament!),
           const SizedBox(height: 16),
         ],
         if (breed.description != null)
-          _buildDetailRow(context, 'Description', breed.description ?? ''),
+          _buildDetailRow(context, l10n.description, breed.description ?? ''),
       ],
     );
   }

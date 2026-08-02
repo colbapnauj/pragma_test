@@ -1,0 +1,38 @@
+{
+  "@@locale": "en",
+  "appTitle": "Cat Breeds",
+  "splashTitle": "Cat Breeds",
+  "homeTitle": "Cat Breeds",
+  "breedDetailTitle": "Breed Detail",
+  "searchHint": "Search breeds...",
+  "searchLabel": "Search cat breeds",
+  "clearSearch": "Clear search",
+  "viewDetails": "View details",
+  "moreButton": "More...",
+  "noImageAvailable": "No image available",
+  "noResultsFound": "No results found",
+  "searching": "Searching...",
+  "results": "Results ({count})",
+  "noBreeds": "No breeds found",
+  "origin": "Origin",
+  "intelligence": "Intelligence",
+  "adaptability": "Adaptability",
+  "lifeSpan": "Life Span",
+  "description": "Description",
+  "temperament": "Temperament",
+  "breedImage": "{name} image",
+  "breedDetails": "{name} details",
+  "pullToRefresh": "Pull to refresh",
+  "error": "Error: {message}",
+  "loadingIndicator": "Loading...",
+  "breedCard": "Cat breed: {name}",
+  "@breedCard": {
+    "description": "Semantics label for breed card",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Siamese"
+      }
+    }
+  }
+}
