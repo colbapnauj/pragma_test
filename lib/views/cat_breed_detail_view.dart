@@ -43,7 +43,11 @@ class _CatBreedDetailViewContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(breed?.name ?? 'Breed Detail'),
+        title: Semantics(
+          header: true,
+          label: '${breed?.name ?? "Breed Detail"} details',
+          child: Text(breed?.name ?? 'Breed Detail'),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -51,38 +55,42 @@ class _CatBreedDetailViewContent extends StatelessWidget {
             ? const Center(child: Text('Breed not found'))
             : Column(
                 children: [
-                  Hero(
-                    tag: 'breed_${breed.id}',
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * AppConfig.breedDetailImageHeightRatio,
-                      width: double.infinity,
-                      child: breed.imageUrl.isEmpty
-                          ? Container(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainer,
-                              child: const Center(
-                                child: Text('No image available'),
-                              ),
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: breed.imageUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
+                  Semantics(
+                    image: true,
+                    label: '${breed.name} breed image',
+                    child: Hero(
+                      tag: 'breed_${breed.id}',
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * AppConfig.breedDetailImageHeightRatio,
+                        width: double.infinity,
+                        child: breed.imageUrl.isEmpty
+                            ? Container(
                                 color: Theme.of(
                                   context,
                                 ).colorScheme.surfaceContainer,
                                 child: const Center(
-                                  child: CircularProgressIndicator(),
+                                  child: Text('No image available'),
+                                ),
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: breed.imageUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainer,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainer,
+                                  child: const Center(child: Icon(Icons.error)),
                                 ),
                               ),
-                              errorWidget: (context, url, error) => Container(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainer,
-                                child: const Center(child: Icon(Icons.error)),
-                              ),
-                            ),
+                      ),
                     ),
                   ),
                   Expanded(
@@ -147,13 +155,16 @@ class _CatBreedDetailViewContent extends StatelessWidget {
   }
 
   Widget _buildDetailRow(BuildContext context, String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.labelSmall),
-        const SizedBox(height: 4),
-        Text(value, style: Theme.of(context).textTheme.bodyMedium),
-      ],
+    return Semantics(
+      label: '$label: $value',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.labelSmall),
+          const SizedBox(height: 4),
+          Text(value, style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
     );
   }
 }

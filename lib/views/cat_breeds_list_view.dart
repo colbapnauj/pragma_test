@@ -78,28 +78,47 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SearchBar(
-                  controller: _searchController,
-                  hintText: 'Search breeds...',
-                  onChanged: (value) {
-                    viewModel.updateSearchQuery(value);
-                    _searchDebounce(() {
-                      viewModel.performSearch();
-                    });
-                  },
-                  trailing: _searchController.text.isNotEmpty
-                      ? [
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              _searchController.clear();
-                              _searchDebounce.cancel();
-                              viewModel.updateSearchQuery('');
-                              setState(() {});
-                            },
-                          ),
-                        ]
-                      : null,
+                Semantics(
+                  textField: true,
+                  label: 'Search cat breeds',
+                  enabled: true,
+                  onTap: () => _searchController.selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: _searchController.text.length,
+                  ),
+                  child: SearchBar(
+                    controller: _searchController,
+                    hintText: 'Search breeds...',
+                    onChanged: (value) {
+                      viewModel.updateSearchQuery(value);
+                      _searchDebounce(() {
+                        viewModel.performSearch();
+                      });
+                    },
+                    trailing: _searchController.text.isNotEmpty
+                        ? [
+                            Semantics(
+                              button: true,
+                              label: 'Clear search',
+                              onTap: () {
+                                _searchController.clear();
+                                _searchDebounce.cancel();
+                                viewModel.updateSearchQuery('');
+                                setState(() {});
+                              },
+                              child: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _searchDebounce.cancel();
+                                  viewModel.updateSearchQuery('');
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                          ]
+                        : null,
+                  ),
                 ),
                 if (viewModel.isInSearchMode)
                   Padding(
