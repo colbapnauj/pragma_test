@@ -1,9 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import '../core/network/dio_client.dart';
-import '../data/repositories/cat_breed_repository_impl.dart';
+import '../core/di/service_locator.dart';
+import '../data/repositories/cat_breed_repository.dart';
 import '../viewmodels/cat_breed_detail_view_model.dart';
 
 class CatBreedDetailView extends StatefulWidget {
@@ -21,10 +20,7 @@ class _CatBreedDetailViewState extends State<CatBreedDetailView> {
   @override
   void initState() {
     super.initState();
-    final apiKey = dotenv.env['CAT_API_KEY'];
-    _viewModel = CatBreedDetailViewModel(
-      CatBreedRepositoryImpl(DioClient.create(apiKey: apiKey)),
-    );
+    _viewModel = CatBreedDetailViewModel(getIt<CatBreedRepository>());
     _viewModel.addListener(_onViewModelChanged);
     _viewModel.loadBreed(widget.breedId);
   }

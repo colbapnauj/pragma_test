@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/constants/app_routes.dart';
-import '../core/network/dio_client.dart';
+import '../core/di/service_locator.dart';
 import '../core/utils/debounce.dart' as debounce_util;
-import '../data/repositories/cat_breed_repository_impl.dart';
+import '../data/repositories/cat_breed_repository.dart';
 import '../viewmodels/cat_breeds_list_view_model.dart';
 import 'widgets/cat_breed_card.dart';
 
@@ -25,10 +24,7 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
   @override
   void initState() {
     super.initState();
-    final apiKey = dotenv.env['CAT_API_KEY'];
-    _viewModel = CatBreedsListViewModel(
-      CatBreedRepositoryImpl(DioClient.create(apiKey: apiKey)),
-    );
+    _viewModel = CatBreedsListViewModel(getIt<CatBreedRepository>());
     _scrollController = ScrollController();
     _searchController = TextEditingController();
     _searchDebounce = debounce_util.Debounce(
