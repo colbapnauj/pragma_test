@@ -73,4 +73,38 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
       return Failure(AppException(e.toString()));
     }
   }
+
+  @override
+  Future<Result<List<CatBreed>>> searchBreeds(String query) async {
+    if (query.isEmpty) {
+      return const Success([]);
+    }
+
+    try {
+      final response = await _dio.get<List<dynamic>>(
+        '$_breedsPath/search',
+        queryParameters: {
+          'q': query,
+        },
+      );
+
+      final rawList = response.data ?? const [];
+      final breeds = rawList
+          .map((json) => CatBreedMapper.fromDto(
+                CatBreedDto.fromJson(json as Map<String, dynamic>),
+              ))
+          .toList();
+
+      return Success(breeds);
+    } on DioException catch (e) {
+      return Failure(
+        AppException(
+          e.message ?? 'Network error while searching cat breeds',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Failure(AppException(e.toString()));
+    }
+  }
 }

@@ -8,4 +8,6 @@ abstract class CatBreedRepository {
   });
 
   Future<Result<CatBreed>> getBreedById(String breedId);
+
+  Future<Result<List<CatBreed>>> searchBreeds(String query);
 }
