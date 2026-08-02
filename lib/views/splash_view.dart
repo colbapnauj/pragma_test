@@ -42,18 +42,23 @@ class _SplashViewState extends State<SplashView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: Center(
-              child: Text(
-                'Cat Breeds',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Cat Breeds',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 32),
+                const CircularProgressIndicator(),
+              ],
             ),
           ),
           Expanded(
-            child: Container(
-              color: Colors.grey[200],
-              child: const Center(
-                child: Text('Cat Image Placeholder'),
+            child: Center(
+              child: Image.asset(
+                'assets/images/cat.png',
+                fit: BoxFit.contain,
               ),
             ),
           ),
