@@ -1,0 +1,21 @@
+class CatBreedDto {
+  const CatBreedDto({
+    required this.id,
+    required this.name,
+  });
+
+  factory CatBreedDto.fromJson(Map<String, dynamic> json) {
+    return CatBreedDto(
+      id: json['id'] as String,
+      name: json['name'] as String,
+    );
+  }
+
+  final String id;
+  final String name;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+      };
+}
