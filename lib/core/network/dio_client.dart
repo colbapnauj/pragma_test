@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 
 import 'api_constants.dart';
+import 'api_key_interceptor.dart';
 
 class DioClient {
   DioClient._();
 
-  static Dio create() {
+  static Dio create({String? apiKey}) {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -14,10 +15,7 @@ class DioClient {
       ),
     );
 
-    final apiKey = ApiConstants.apiKey;
-    if (apiKey != null && apiKey.isNotEmpty) {
-      dio.options.headers[ApiConstants.apiKeyHeader] = apiKey;
-    }
+    dio.interceptors.add(ApiKeyInterceptor(apiKey: apiKey));
 
     return dio;
   }

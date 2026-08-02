@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/constants/app_routes.dart';
@@ -24,8 +25,9 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
   @override
   void initState() {
     super.initState();
+    final apiKey = dotenv.env['CAT_API_KEY'];
     _viewModel = CatBreedsListViewModel(
-      CatBreedRepositoryImpl(DioClient.create()),
+      CatBreedRepositoryImpl(DioClient.create(apiKey: apiKey)),
     );
     _scrollController = ScrollController();
     _searchController = TextEditingController();
