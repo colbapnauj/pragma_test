@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../core/di/service_locator.dart';
 import '../data/entities/cat_breed.dart';
 import '../data/repositories/cat_breed_repository.dart';
 import '../viewmodels/cat_breed_detail_view_model.dart';
 
-class CatBreedDetailView extends StatefulWidget {
+class CatBreedDetailView extends StatelessWidget {
   const CatBreedDetailView({
     super.key,
     required this.breedId,
@@ -19,38 +19,26 @@ class CatBreedDetailView extends StatefulWidget {
   final String? breedImageUrl;
 
   @override
-  State<CatBreedDetailView> createState() => _CatBreedDetailViewState();
-}
-
-class _CatBreedDetailViewState extends State<CatBreedDetailView> {
-  late CatBreedDetailViewModel _viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = CatBreedDetailViewModel(getIt<CatBreedRepository>());
-    _viewModel.addListener(_onViewModelChanged);
-    _viewModel.loadBreed(
-      widget.breedId,
-      preloadedName: widget.breedName,
-      preloadedImageUrl: widget.breedImageUrl,
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CatBreedDetailViewModel(context.read<CatBreedRepository>())
+        ..loadBreed(
+          breedId,
+          preloadedName: breedName,
+          preloadedImageUrl: breedImageUrl,
+        ),
+      child: const _CatBreedDetailViewContent(),
     );
   }
+}
 
-  void _onViewModelChanged() {
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
-    super.dispose();
-  }
+class _CatBreedDetailViewContent extends StatelessWidget {
+  const _CatBreedDetailViewContent();
 
   @override
   Widget build(BuildContext context) {
-    final breed = _viewModel.breed;
+    final viewModel = context.watch<CatBreedDetailViewModel>();
+    final breed = viewModel.breed;
 
     return Scaffold(
       appBar: AppBar(
@@ -97,13 +85,13 @@ class _CatBreedDetailViewState extends State<CatBreedDetailView> {
                     ),
                   ),
                   Expanded(
-                    child: _viewModel.errorMessage != null
+                    child: viewModel.errorMessage != null
                         ? Center(
-                            child: Text('Error: ${_viewModel.errorMessage}'),
+                            child: Text('Error: ${viewModel.errorMessage}'),
                           )
                         : SingleChildScrollView(
                             padding: const EdgeInsets.all(16.0),
-                            child: _buildDetailsContent(context, breed),
+                            child: _buildDetailsContent(context, breed, viewModel),
                           ),
                   ),
                 ],
@@ -112,8 +100,12 @@ class _CatBreedDetailViewState extends State<CatBreedDetailView> {
     );
   }
 
-  Widget _buildDetailsContent(BuildContext context, CatBreed breed) {
-    if (_viewModel.isLoading) {
+  Widget _buildDetailsContent(
+    BuildContext context,
+    CatBreed breed,
+    CatBreedDetailViewModel viewModel,
+  ) {
+    if (viewModel.isLoading) {
       return _buildLoadingContent(context);
     }
     return _buildLoadedContent(context, breed);

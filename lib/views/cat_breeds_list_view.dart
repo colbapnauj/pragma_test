@@ -1,22 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../core/constants/app_routes.dart';
-import '../core/di/service_locator.dart';
 import '../core/utils/debounce.dart' as debounce_util;
 import '../data/repositories/cat_breed_repository.dart';
 import '../viewmodels/cat_breeds_list_view_model.dart';
 import 'widgets/cat_breed_card.dart';
 
-class CatBreedsListView extends StatefulWidget {
+class CatBreedsListView extends StatelessWidget {
   const CatBreedsListView({super.key});
 
   @override
-  State<CatBreedsListView> createState() => _CatBreedsListViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CatBreedsListViewModel(context.read<CatBreedRepository>())
+        ..loadBreeds(),
+      child: const _CatBreedsListViewContent(),
+    );
+  }
 }
 
-class _CatBreedsListViewState extends State<CatBreedsListView> {
-  late CatBreedsListViewModel _viewModel;
+class _CatBreedsListViewContent extends StatefulWidget {
+  const _CatBreedsListViewContent();
+
+  @override
+  State<_CatBreedsListViewContent> createState() =>
+      _CatBreedsListViewContentState();
+}
+
+class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
   late ScrollController _scrollController;
   late TextEditingController _searchController;
   late debounce_util.Debounce _searchDebounce;
@@ -24,25 +37,19 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
   @override
   void initState() {
     super.initState();
-    _viewModel = CatBreedsListViewModel(getIt<CatBreedRepository>());
     _scrollController = ScrollController();
     _searchController = TextEditingController();
     _searchDebounce = debounce_util.Debounce(
       duration: const Duration(milliseconds: 800),
     );
     _scrollController.addListener(_onScroll);
-    _viewModel.addListener(_onViewModelChanged);
-    _viewModel.loadBreeds();
-  }
-
-  void _onViewModelChanged() {
-    setState(() {});
   }
 
   void _onScroll() {
+    final viewModel = context.read<CatBreedsListViewModel>();
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 500) {
-      _viewModel.loadMore();
+      viewModel.loadMore();
     }
   }
 
@@ -52,13 +59,12 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
     _scrollController.dispose();
     _searchController.dispose();
     _searchDebounce.dispose();
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<CatBreedsListViewModel>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cat Breeds'),
@@ -75,9 +81,9 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
                   controller: _searchController,
                   hintText: 'Search breeds...',
                   onChanged: (value) {
-                    _viewModel.updateSearchQuery(value);
+                    viewModel.updateSearchQuery(value);
                     _searchDebounce(() {
-                      _viewModel.performSearch();
+                      viewModel.performSearch();
                     });
                   },
                   trailing: _searchController.text.isNotEmpty
@@ -87,22 +93,22 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
                             onPressed: () {
                               _searchController.clear();
                               _searchDebounce.cancel();
-                              _viewModel.updateSearchQuery('');
+                              viewModel.updateSearchQuery('');
                               setState(() {});
                             },
                           ),
                         ]
                       : null,
                 ),
-                if (_viewModel.isInSearchMode)
+                if (viewModel.isInSearchMode)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      _viewModel.isSearching
+                      viewModel.isSearching
                           ? 'Searching...'
-                          : _viewModel.breeds.isEmpty
+                          : viewModel.breeds.isEmpty
                               ? 'No results found'
-                              : 'Results (${_viewModel.breeds.length})',
+                              : 'Results (${viewModel.breeds.length})',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
@@ -110,45 +116,45 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
             ),
           ),
           Expanded(
-            child: _buildContent(),
+            child: _buildContent(context, viewModel),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContent() {
-    if (_viewModel.isLoading) {
+  Widget _buildContent(BuildContext context, CatBreedsListViewModel viewModel) {
+    if (viewModel.isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
-    if (_viewModel.errorMessage != null && _viewModel.breeds.isEmpty) {
+    if (viewModel.errorMessage != null && viewModel.breeds.isEmpty) {
       return Center(
         child: Text(
-          'Error: ${_viewModel.errorMessage}',
+          'Error: ${viewModel.errorMessage}',
           textAlign: TextAlign.center,
         ),
       );
     }
 
-    if (_viewModel.isSearching && _viewModel.breeds.isEmpty) {
+    if (viewModel.isSearching && viewModel.breeds.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    if (_viewModel.breeds.isEmpty) {
+    if (viewModel.breeds.isEmpty) {
       return const Center(
         child: Text('No breeds found'),
       );
     }
 
-    if (_viewModel.isInSearchMode) {
+    if (viewModel.isInSearchMode) {
       return ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: _viewModel.breeds.length,
+        itemCount: viewModel.breeds.length,
         itemBuilder: (context, index) {
-          final breed = _viewModel.breeds[index];
+          final breed = viewModel.breeds[index];
           return CatBreedCard(
             breed: breed,
             onMorePressed: () {
@@ -167,14 +173,14 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
     }
 
     return RefreshIndicator.adaptive(
-      onRefresh: () => _viewModel.loadBreeds(),
+      onRefresh: () => viewModel.loadBreeds(),
       child: ListView.builder(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: _viewModel.breeds.length + (_viewModel.isLoadingMore ? 1 : 0),
+        itemCount: viewModel.breeds.length + (viewModel.isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
-          if (index == _viewModel.breeds.length) {
+          if (index == viewModel.breeds.length) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Center(
@@ -183,7 +189,7 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
             );
           }
 
-          final breed = _viewModel.breeds[index];
+          final breed = viewModel.breeds[index];
           return CatBreedCard(
             breed: breed,
             onMorePressed: () {
