@@ -24,12 +24,12 @@ class CatBreedCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     breed.name,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                ElevatedButton(
+                TextButton(
                   onPressed: onMorePressed,
-                  child: const Text('More'),
+                  child: const Text('More...'),
                 ),
               ],
             ),
@@ -39,22 +39,25 @@ class CatBreedCard extends StatelessWidget {
             height: 200,
             child: breed.imageUrl.isEmpty
                 ? Container(
-                    color: Colors.grey[300],
-                    child: const Center(
-                      child: Text('No image available'),
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: Text(
+                        'No image available',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
                   )
                 : CachedNetworkImage(
                     imageUrl: breed.imageUrl,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
-                      color: Colors.grey[300],
+                      color: Colors.grey[200],
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
-                      color: Colors.grey[300],
+                      color: Colors.grey[200],
                       child: const Center(
                         child: Icon(Icons.error),
                       ),
@@ -74,6 +77,7 @@ class CatBreedCard extends StatelessWidget {
                         'Origin',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         breed.origin,
                         style: Theme.of(context).textTheme.bodyMedium,
@@ -89,6 +93,7 @@ class CatBreedCard extends StatelessWidget {
                         'Intelligence',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         '${breed.intelligence}/5',
                         style: Theme.of(context).textTheme.bodyMedium,
