@@ -17,9 +17,24 @@ class CatBreedDetailViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadBreed(String breedId) async {
+  Future<void> loadBreed(
+    String breedId, {
+    String? preloadedName,
+    String? preloadedImageUrl,
+  }) async {
+    final hasPreloadedData = preloadedName != null && preloadedImageUrl != null;
+
     _isLoading = true;
     _errorMessage = null;
+
+    if (hasPreloadedData) {
+      _breed = _PreloadedBreed(
+        id: breedId,
+        name: preloadedName,
+        imageUrl: preloadedImageUrl,
+      );
+    }
+
     notifyListeners();
 
     final result = await _repository.getBreedById(breedId);
@@ -35,4 +50,23 @@ class CatBreedDetailViewModel extends ChangeNotifier {
         notifyListeners();
     }
   }
+}
+
+class _PreloadedBreed extends CatBreed {
+  _PreloadedBreed({
+    required super.id,
+    required super.name,
+    required String imageUrl,
+  }) : super(
+    origin: '',
+    intelligence: 0,
+    referenceImageId: '',
+  ) {
+    _imageUrl = imageUrl;
+  }
+
+  late String _imageUrl;
+
+  @override
+  String get imageUrl => _imageUrl;
 }

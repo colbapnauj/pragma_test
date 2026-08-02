@@ -23,7 +23,13 @@ class AppRouter {
             path: AppRoutes.breedDetail,
             builder: (context, state) {
               final id = state.pathParameters['id'] ?? '';
-              return CatBreedDetailView(breedId: id);
+              final name = state.uri.queryParameters['name'];
+              final imageUrl = state.uri.queryParameters['imageUrl'];
+              return CatBreedDetailView(
+                breedId: id,
+                breedName: name,
+                breedImageUrl: imageUrl,
+              );
             },
           ),
         ],

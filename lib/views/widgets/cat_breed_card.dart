@@ -34,35 +34,38 @@ class CatBreedCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            height: 200,
-            child: breed.imageUrl.isEmpty
-                ? Container(
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: Text(
-                        'No image available',
-                        style: Theme.of(context).textTheme.bodySmall,
+          Hero(
+            tag: 'breed_${breed.id}',
+            child: SizedBox(
+              width: double.infinity,
+              height: 200,
+              child: breed.imageUrl.isEmpty
+                  ? Container(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      child: Center(
+                        child: Text(
+                          'No image available',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: breed.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        child: const Center(
+                          child: Icon(Icons.error),
+                        ),
                       ),
                     ),
-                  )
-                : CachedNetworkImage(
-                    imageUrl: breed.imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: Icon(Icons.error),
-                      ),
-                    ),
-                  ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),

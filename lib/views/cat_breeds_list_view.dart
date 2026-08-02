@@ -152,7 +152,14 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
           return CatBreedCard(
             breed: breed,
             onMorePressed: () {
-              context.go("/home/${AppRoutes.breedDetailPath(breed.id)}");
+              final path = "/home/${AppRoutes.breedDetailPath(breed.id)}";
+              final uri = Uri.parse(path).replace(
+                queryParameters: {
+                  'name': breed.name,
+                  'imageUrl': breed.imageUrl,
+                },
+              );
+              context.go(uri.toString());
             },
           );
         },
@@ -180,7 +187,14 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
           return CatBreedCard(
             breed: breed,
             onMorePressed: () {
-              context.go("/home/${AppRoutes.breedDetailPath(breed.id)}");
+              final path = "/home/${AppRoutes.breedDetailPath(breed.id)}";
+              final uri = Uri.parse(path).replace(
+                queryParameters: {
+                  'name': breed.name,
+                  'imageUrl': breed.imageUrl,
+                },
+              );
+              context.go(uri.toString());
             },
           );
         },

@@ -26,6 +26,7 @@ class AppTheme {
   }
 
   static TextTheme _buildLightTextTheme() {
+    const onSurfaceVariant = Color(0xFF79747E);
     return TextTheme(
       titleLarge: const TextStyle(
         fontFamily: 'Lato',
@@ -48,7 +49,7 @@ class AppTheme {
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.4,
-        color: Colors.grey,
+        color: onSurfaceVariant,
       ),
 
       bodyMedium: const TextStyle(
@@ -65,12 +66,13 @@ class AppTheme {
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.2,
-        color: Colors.grey,
+        color: onSurfaceVariant,
       ),
     );
   }
 
   static TextTheme _buildDarkTextTheme() {
+    const onSurfaceVariant = Color(0xFFC4C7C5);
     return TextTheme(
       titleLarge: const TextStyle(
         fontFamily: 'Lato',
@@ -93,7 +95,7 @@ class AppTheme {
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.4,
-        color: Colors.grey,
+        color: onSurfaceVariant,
       ),
 
       bodyMedium: const TextStyle(
@@ -110,7 +112,7 @@ class AppTheme {
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.2,
-        color: Colors.grey,
+        color: onSurfaceVariant,
       ),
     );
   }
