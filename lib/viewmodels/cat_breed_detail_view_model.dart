@@ -12,6 +12,7 @@ class CatBreedDetailViewModel extends ChangeNotifier {
   CatBreed? _breed;
   bool _isLoading = false;
   String? _errorMessage;
+  late String _breedId;
 
   CatBreed? get breed => _breed;
   bool get isLoading => _isLoading;
@@ -21,13 +22,15 @@ class CatBreedDetailViewModel extends ChangeNotifier {
     String breedId, {
     String? preloadedName,
     String? preloadedImageUrl,
+    bool forceRefresh = false,
   }) async {
+    _breedId = breedId;
     final hasPreloadedData = preloadedName != null && preloadedImageUrl != null;
 
     _isLoading = true;
     _errorMessage = null;
 
-    if (hasPreloadedData) {
+    if (hasPreloadedData && !forceRefresh) {
       _breed = _PreloadedBreed(
         id: breedId,
         name: preloadedName,
@@ -37,7 +40,7 @@ class CatBreedDetailViewModel extends ChangeNotifier {
 
     notifyListeners();
 
-    final result = await _repository.getBreedById(breedId);
+    final result = await _repository.getBreedById(breedId, forceRefresh: forceRefresh);
 
     switch (result) {
       case Success(:final data):
@@ -50,6 +53,8 @@ class CatBreedDetailViewModel extends ChangeNotifier {
         notifyListeners();
     }
   }
+
+  Future<void> refresh() => loadBreed(_breedId, forceRefresh: true);
 }
 
 class _PreloadedBreed extends CatBreed {

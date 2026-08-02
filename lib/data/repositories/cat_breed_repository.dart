@@ -7,7 +7,10 @@ abstract class CatBreedRepository {
     int page = 0,
   });
 
-  Future<Result<CatBreed>> getBreedById(String breedId);
+  Future<Result<CatBreed>> getBreedById(
+    String breedId, {
+    bool forceRefresh = false,
+  });
 
   Future<Result<List<CatBreed>>> searchBreeds(String query);
 }

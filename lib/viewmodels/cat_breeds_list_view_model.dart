@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../core/constants/app_config.dart';
 import '../core/utils/debounce.dart';
 import '../core/utils/result.dart';
 import '../data/entities/cat_breed.dart';
@@ -7,7 +8,7 @@ import '../data/repositories/cat_breed_repository.dart';
 
 class CatBreedsListViewModel extends ChangeNotifier {
   CatBreedsListViewModel(this._repository) {
-    _searchDebounce = Debounce(duration: const Duration(milliseconds: 800));
+    _searchDebounce = Debounce(duration: AppConfig.searchDebounceDelay);
   }
 
   final CatBreedRepository _repository;

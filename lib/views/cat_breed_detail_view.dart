@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/constants/app_config.dart';
 import '../data/entities/cat_breed.dart';
 import '../data/repositories/cat_breed_repository.dart';
 import '../viewmodels/cat_breed_detail_view_model.dart';
@@ -53,7 +54,7 @@ class _CatBreedDetailViewContent extends StatelessWidget {
                   Hero(
                     tag: 'breed_${breed.id}',
                     child: SizedBox(
-                      height: MediaQuery.of(context).size.height / 2,
+                      height: MediaQuery.of(context).size.height * AppConfig.breedDetailImageHeightRatio,
                       width: double.infinity,
                       child: breed.imageUrl.isEmpty
                           ? Container(
@@ -85,9 +86,13 @@ class _CatBreedDetailViewContent extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16.0),
-                      child: _buildDetailsContent(context, breed, viewModel),
+                    child: RefreshIndicator.adaptive(
+                      onRefresh: () => viewModel.refresh(),
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(16.0),
+                        child: _buildDetailsContent(context, breed, viewModel),
+                      ),
                     ),
                   ),
                 ],

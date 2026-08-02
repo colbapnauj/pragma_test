@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 
+import '../core/constants/app_config.dart';
+
 class SplashViewModel extends ChangeNotifier {
-  SplashViewModel({this.displayDuration = const Duration(seconds: 2)});
+  SplashViewModel({this.displayDuration = AppConfig.splashDisplayDuration});
 
   final Duration displayDuration;
 

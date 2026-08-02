@@ -1,20 +1,20 @@
-import 'package:dio/dio.dart';
-
-import '../../core/network/network_error_handler.dart';
+import '../../core/constants/app_config.dart';
 import '../../core/utils/app_exception.dart';
 import '../../core/utils/result.dart';
-import '../dtos/cat_breed_dto.dart';
+import '../datasources/cat_breed_remote_data_source.dart';
 import '../entities/cat_breed.dart';
 import '../mappers/cat_breed_mapper.dart';
+import '../models/cached_data.dart';
 import 'cat_breed_repository.dart';
 
 class CatBreedRepositoryImpl implements CatBreedRepository {
-  const CatBreedRepositoryImpl(this._dio);
+  CatBreedRepositoryImpl(this._remoteDataSource) {
+    _breedCache = {};
+  }
 
-  final Dio _dio;
+  final CatBreedRemoteDataSource _remoteDataSource;
+  late final Map<String, CachedData<CatBreed>> _breedCache;
 
-  static const String _breedsPath = '/breeds';
-  static const String _breedDetailPath = '/breeds';
 
   @override
   Future<Result<List<CatBreed>>> getBreeds({
@@ -22,52 +22,40 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
     int page = 0,
   }) async {
     try {
-      final response = await _dio.get<List<dynamic>>(
-        _breedsPath,
-        queryParameters: {
-          'limit': limit,
-          'page': page,
-        },
-      );
-
-      final rawList = response.data ?? const [];
-      final breeds = rawList
-          .map((json) => CatBreedMapper.fromDto(
-                CatBreedDto.fromJson(json as Map<String, dynamic>),
-              ))
+      final dtos = await _remoteDataSource.getBreeds(limit: limit, page: page);
+      final breeds = dtos
+          .map((dto) => CatBreedMapper.fromDto(dto))
           .toList();
-
       return Success(breeds);
-    } on DioException catch (e) {
-      return Failure(e.toAppException());
-    } catch (e) {
-      // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
-      return Failure(
-        AppException('Algo salió mal. Por favor, intenta de nuevo.'),
-      );
+    } on Exception catch (e) {
+      return Failure(_handleException(e));
     }
   }
 
   @override
-  Future<Result<CatBreed>> getBreedById(String breedId) async {
+  Future<Result<CatBreed>> getBreedById(
+    String breedId, {
+    bool forceRefresh = false,
+  }) async {
     try {
-      final response = await _dio.get<Map<String, dynamic>>(
-        '$_breedDetailPath/$breedId',
-      );
+      if (!forceRefresh && _breedCache.containsKey(breedId)) {
+        final cached = _breedCache[breedId]!;
+        if (cached.isValid) {
+          return Success(cached.data);
+        }
+      }
 
-      final json = response.data ?? {};
-      final breed = CatBreedMapper.fromDto(
-        CatBreedDto.fromJson(json),
+      final dto = await _remoteDataSource.getBreedById(breedId);
+      final breed = CatBreedMapper.fromDto(dto);
+
+      _breedCache[breedId] = CachedData(
+        data: breed,
+        expiresAt: DateTime.now().add(AppConfig.breedDetailCacheDuration),
       );
 
       return Success(breed);
-    } on DioException catch (e) {
-      return Failure(e.toAppException());
-    } catch (e) {
-      // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
-      return Failure(
-        AppException('Algo salió mal. Por favor, intenta de nuevo.'),
-      );
+    } on Exception catch (e) {
+      return Failure(_handleException(e));
     }
   }
 
@@ -78,28 +66,21 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
     }
 
     try {
-      final response = await _dio.get<List<dynamic>>(
-        '$_breedsPath/search',
-        queryParameters: {
-          'q': query,
-        },
-      );
-
-      final rawList = response.data ?? const [];
-      final breeds = rawList
-          .map((json) => CatBreedMapper.fromDto(
-                CatBreedDto.fromJson(json as Map<String, dynamic>),
-              ))
+      final dtos = await _remoteDataSource.searchBreeds(query);
+      final breeds = dtos
+          .map((dto) => CatBreedMapper.fromDto(dto))
           .toList();
-
       return Success(breeds);
-    } on DioException catch (e) {
-      return Failure(e.toAppException());
-    } catch (e) {
-      // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
-      return Failure(
-        AppException('Algo salió mal. Por favor, intenta de nuevo.'),
-      );
+    } on Exception catch (e) {
+      return Failure(_handleException(e));
     }
+  }
+
+  AppException _handleException(Exception e) {
+    if (e is AppException) {
+      return e;
+    }
+    // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
+    return AppException('Algo salió mal. Por favor, intenta de nuevo.');
   }
 }

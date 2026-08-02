@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../core/constants/app_config.dart';
 import '../core/constants/app_routes.dart';
 import '../core/utils/debounce.dart' as debounce_util;
 import '../data/repositories/cat_breed_repository.dart';
@@ -40,7 +41,7 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
     _scrollController = ScrollController();
     _searchController = TextEditingController();
     _searchDebounce = debounce_util.Debounce(
-      duration: const Duration(milliseconds: 800),
+      duration: AppConfig.searchDebounceDelay,
     );
     _scrollController.addListener(_onScroll);
   }
@@ -48,7 +49,7 @@ class _CatBreedsListViewContentState extends State<_CatBreedsListViewContent> {
   void _onScroll() {
     final viewModel = context.read<CatBreedsListViewModel>();
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 500) {
+        _scrollController.position.maxScrollExtent - AppConfig.paginationThreshold) {
       viewModel.loadMore();
     }
   }
