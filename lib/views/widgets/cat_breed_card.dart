@@ -1,7 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/entities/cat_breed.dart';
+
 class CatBreedCard extends StatelessWidget {
-  const CatBreedCard({super.key});
+  const CatBreedCard({super.key, required this.breed, required this.onMorePressed});
+
+  final CatBreed breed;
+  final VoidCallback onMorePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -17,26 +23,43 @@ class CatBreedCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Breed Name',
+                    breed.name,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    // TODO: navegar a detalle
-                  },
+                  onPressed: onMorePressed,
                   child: const Text('More'),
                 ),
               ],
             ),
           ),
-          Container(
+          SizedBox(
             width: double.infinity,
             height: 200,
-            color: Colors.grey[300],
-            child: const Center(
-              child: Text('Image Placeholder'),
-            ),
+            child: breed.imageUrl.isEmpty
+                ? Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Text('No image available'),
+                    ),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: breed.imageUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: Icon(Icons.error),
+                      ),
+                    ),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -52,7 +75,7 @@ class CatBreedCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       Text(
-                        'Country',
+                        breed.origin,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -67,7 +90,7 @@ class CatBreedCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       Text(
-                        '5/5',
+                        '${breed.intelligence}/5',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],

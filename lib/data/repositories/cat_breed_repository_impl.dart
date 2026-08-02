@@ -15,9 +15,18 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
   static const String _breedsPath = '/breeds';
 
   @override
-  Future<Result<List<CatBreed>>> getBreeds() async {
+  Future<Result<List<CatBreed>>> getBreeds({
+    int limit = 10,
+    int page = 0,
+  }) async {
     try {
-      final response = await _dio.get<List<dynamic>>(_breedsPath);
+      final response = await _dio.get<List<dynamic>>(
+        _breedsPath,
+        queryParameters: {
+          'limit': limit,
+          'page': page,
+        },
+      );
 
       final rawList = response.data ?? const [];
       final breeds = rawList

@@ -9,8 +9,8 @@ class CatBreedDto {
 
   factory CatBreedDto.fromJson(Map<String, dynamic> json) {
     return CatBreedDto(
-      id: json['id'] as String,
-      name: json['name'] as String,
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
       origin: json['origin'] as String?,
       intelligence: json['intelligence'] as int?,
       referenceImageId: json['reference_image_id'] as String?,
