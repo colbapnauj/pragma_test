@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../core/network/network_error_handler.dart';
 import '../../core/utils/app_exception.dart';
 import '../../core/utils/result.dart';
 import '../dtos/cat_breed_dto.dart';
@@ -38,14 +39,12 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
 
       return Success(breeds);
     } on DioException catch (e) {
-      return Failure(
-        AppException(
-          e.message ?? 'Network error while fetching cat breeds',
-          statusCode: e.response?.statusCode,
-        ),
-      );
+      return Failure(e.toAppException());
     } catch (e) {
-      return Failure(AppException(e.toString()));
+      // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
+      return Failure(
+        AppException('Algo salió mal. Por favor, intenta de nuevo.'),
+      );
     }
   }
 
@@ -63,14 +62,12 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
 
       return Success(breed);
     } on DioException catch (e) {
-      return Failure(
-        AppException(
-          e.message ?? 'Network error while fetching cat breed',
-          statusCode: e.response?.statusCode,
-        ),
-      );
+      return Failure(e.toAppException());
     } catch (e) {
-      return Failure(AppException(e.toString()));
+      // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
+      return Failure(
+        AppException('Algo salió mal. Por favor, intenta de nuevo.'),
+      );
     }
   }
 
@@ -97,14 +94,12 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
 
       return Success(breeds);
     } on DioException catch (e) {
-      return Failure(
-        AppException(
-          e.message ?? 'Network error while searching cat breeds',
-          statusCode: e.response?.statusCode,
-        ),
-      );
+      return Failure(e.toAppException());
     } catch (e) {
-      return Failure(AppException(e.toString()));
+      // TODO: Capturar error y enviarlo a sistema de observabilidad o errores
+      return Failure(
+        AppException('Algo salió mal. Por favor, intenta de nuevo.'),
+      );
     }
   }
 }
