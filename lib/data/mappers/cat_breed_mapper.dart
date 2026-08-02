@@ -14,6 +14,7 @@ class CatBreedMapper {
       description: dto.description,
       adaptability: dto.adaptability,
       lifeSpan: dto.lifeSpan,
+      temperament: dto.temperament,
     );
   }
 }

@@ -73,35 +73,17 @@ class CatBreedCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Origin',
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        breed.origin,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
+                  child: Text(
+                    breed.origin,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Intelligence',
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${breed.intelligence}/5',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
+                  child: Text(
+                    '${breed.intelligence}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.end,
                   ),
                 ),
               ],

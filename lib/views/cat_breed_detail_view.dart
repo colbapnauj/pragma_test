@@ -85,14 +85,10 @@ class _CatBreedDetailViewContent extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: viewModel.errorMessage != null
-                        ? Center(
-                            child: Text('Error: ${viewModel.errorMessage}'),
-                          )
-                        : SingleChildScrollView(
-                            padding: const EdgeInsets.all(16.0),
-                            child: _buildDetailsContent(context, breed, viewModel),
-                          ),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _buildDetailsContent(context, breed, viewModel),
+                    ),
                   ),
                 ],
               ),
@@ -105,14 +101,14 @@ class _CatBreedDetailViewContent extends StatelessWidget {
     CatBreed breed,
     CatBreedDetailViewModel viewModel,
   ) {
+    if (viewModel.errorMessage != null) {
+      return Center(child: Text('Error: ${viewModel.errorMessage}'));
+    }
+
     if (viewModel.isLoading) {
-      return _buildLoadingContent(context);
+      return Center(child: const CircularProgressIndicator());
     }
     return _buildLoadedContent(context, breed);
-  }
-
-  Widget _buildLoadingContent(BuildContext context) {
-    return const CircularProgressIndicator();
   }
 
   Widget _buildLoadedContent(BuildContext context, CatBreed breed) {
@@ -124,31 +120,23 @@ class _CatBreedDetailViewContent extends StatelessWidget {
           const SizedBox(height: 16),
         ],
         if (breed.intelligence > 0) ...[
-          _buildDetailRow(context, 'Intelligence', '${breed.intelligence}/5'),
+          _buildDetailRow(context, 'Intelligence', '${breed.intelligence}'),
           const SizedBox(height: 16),
         ],
         if (breed.adaptability != null) ...[
-          _buildDetailRow(context, 'Adaptability', '${breed.adaptability}/5'),
+          _buildDetailRow(context, 'Adaptability', '${breed.adaptability}'),
           const SizedBox(height: 16),
         ],
         if (breed.lifeSpan != null) ...[
           _buildDetailRow(context, 'Life Span', breed.lifeSpan!),
           const SizedBox(height: 16),
         ],
+        if (breed.temperament != null) ...[
+          _buildDetailRow(context, 'Temperament', breed.temperament!),
+          const SizedBox(height: 16),
+        ],
         if (breed.description != null)
-          _buildDescription(context, description: breed.description),
-      ],
-    );
-  }
-
-  Widget _buildDescription(BuildContext context, {String? description}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Description', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-
-        Text(description ?? '', style: Theme.of(context).textTheme.bodyMedium),
+          _buildDetailRow(context, 'Description', breed.description ?? ''),
       ],
     );
   }

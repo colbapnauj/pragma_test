@@ -8,6 +8,7 @@ class CatBreed {
     this.description,
     this.adaptability,
     this.lifeSpan,
+    this.temperament,
   });
 
   final String id;
@@ -18,6 +19,7 @@ class CatBreed {
   final String? description;
   final int? adaptability;
   final String? lifeSpan;
+  final String? temperament;
 
   String get imageUrl {
     if (referenceImageId == null || referenceImageId!.isEmpty) {
