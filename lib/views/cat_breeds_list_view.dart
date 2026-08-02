@@ -16,6 +16,7 @@ class CatBreedsListView extends StatefulWidget {
 
 class _CatBreedsListViewState extends State<CatBreedsListView> {
   late CatBreedsListViewModel _viewModel;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -23,6 +24,8 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
     _viewModel = CatBreedsListViewModel(
       CatBreedRepositoryImpl(DioClient.create()),
     );
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
     _viewModel.addListener(_onViewModelChanged);
     _viewModel.loadBreeds();
   }
@@ -31,8 +34,17 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
     setState(() {});
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 500) {
+      _viewModel.loadMore();
+    }
+  }
+
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _viewModel.removeListener(_onViewModelChanged);
     _viewModel.dispose();
     super.dispose();
@@ -71,7 +83,7 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
       );
     }
 
-    if (_viewModel.errorMessage != null) {
+    if (_viewModel.errorMessage != null && _viewModel.breeds.isEmpty) {
       return Center(
         child: Text(
           'Error: ${_viewModel.errorMessage}',
@@ -86,18 +98,32 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: _viewModel.breeds.length,
-      itemBuilder: (context, index) {
-        final breed = _viewModel.breeds[index];
-        return CatBreedCard(
-          breed: breed,
-          onMorePressed: () {
-            context.go(AppRoutes.breedDetailPath(breed.id));
-          },
-        );
-      },
+    return RefreshIndicator.adaptive(
+      onRefresh: () => _viewModel.loadBreeds(),
+      child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        itemCount: _viewModel.breeds.length + (_viewModel.isLoadingMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == _viewModel.breeds.length) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          final breed = _viewModel.breeds[index];
+          return CatBreedCard(
+            breed: breed,
+            onMorePressed: () {
+              context.go(AppRoutes.breedDetailPath(breed.id));
+            },
+          );
+        },
+      ),
     );
   }
 }
