@@ -5,6 +5,9 @@ class CatBreed {
     required this.origin,
     required this.intelligence,
     required this.referenceImageId,
+    this.description,
+    this.adaptability,
+    this.lifeSpan,
   });
 
   final String id;
@@ -12,6 +15,9 @@ class CatBreed {
   final String origin;
   final int intelligence;
   final String? referenceImageId;
+  final String? description;
+  final int? adaptability;
+  final String? lifeSpan;
 
   String get imageUrl {
     if (referenceImageId == null || referenceImageId!.isEmpty) {

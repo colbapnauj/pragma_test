@@ -13,6 +13,7 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
   final Dio _dio;
 
   static const String _breedsPath = '/breeds';
+  static const String _breedDetailPath = '/breeds';
 
   @override
   Future<Result<List<CatBreed>>> getBreeds({
@@ -40,6 +41,31 @@ class CatBreedRepositoryImpl implements CatBreedRepository {
       return Failure(
         AppException(
           e.message ?? 'Network error while fetching cat breeds',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Failure(AppException(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<CatBreed>> getBreedById(String breedId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '$_breedDetailPath/$breedId',
+      );
+
+      final json = response.data ?? {};
+      final breed = CatBreedMapper.fromDto(
+        CatBreedDto.fromJson(json),
+      );
+
+      return Success(breed);
+    } on DioException catch (e) {
+      return Failure(
+        AppException(
+          e.message ?? 'Network error while fetching cat breed',
           statusCode: e.response?.statusCode,
         ),
       );

@@ -119,7 +119,7 @@ class _CatBreedsListViewState extends State<CatBreedsListView> {
           return CatBreedCard(
             breed: breed,
             onMorePressed: () {
-              context.go(AppRoutes.breedDetailPath(breed.id));
+              context.go("/home/${AppRoutes.breedDetailPath(breed.id)}");
             },
           );
         },

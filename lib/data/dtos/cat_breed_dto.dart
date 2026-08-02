@@ -5,6 +5,9 @@ class CatBreedDto {
     this.origin,
     this.intelligence,
     this.referenceImageId,
+    this.description,
+    this.adaptability,
+    this.lifeSpan,
   });
 
   factory CatBreedDto.fromJson(Map<String, dynamic> json) {
@@ -14,6 +17,9 @@ class CatBreedDto {
       origin: json['origin'] as String?,
       intelligence: json['intelligence'] as int?,
       referenceImageId: json['reference_image_id'] as String?,
+      description: json['description'] as String?,
+      adaptability: json['adaptability'] as int?,
+      lifeSpan: json['life_span'] as String?,
     );
   }
 
@@ -22,6 +28,9 @@ class CatBreedDto {
   final String? origin;
   final int? intelligence;
   final String? referenceImageId;
+  final String? description;
+  final int? adaptability;
+  final String? lifeSpan;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -29,5 +38,8 @@ class CatBreedDto {
         'origin': origin,
         'intelligence': intelligence,
         'reference_image_id': referenceImageId,
+        'description': description,
+        'adaptability': adaptability,
+        'life_span': lifeSpan,
       };
 }

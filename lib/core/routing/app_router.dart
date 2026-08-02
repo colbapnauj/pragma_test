@@ -18,13 +18,15 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.home,
         builder: (context, state) => const CatBreedsListView(),
-      ),
-      GoRoute(
-        path: AppRoutes.breedDetail,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? '';
-          return CatBreedDetailView(breedId: id);
-        },
+        routes: [
+          GoRoute(
+            path: AppRoutes.breedDetail,
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return CatBreedDetailView(breedId: id);
+            },
+          ),
+        ],
       ),
     ],
   );
